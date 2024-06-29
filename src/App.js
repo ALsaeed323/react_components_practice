@@ -1,31 +1,23 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [resourceType, setResourceType] = useState('');
-  const [items, setItems] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  useEffect(()=>{
-    console.log('edien');
-    fetch(`https://jsonplaceholder.typicode.com/${resourceType}`)
-    .then(response => response.json())
-    .then(json =>setItems(json))
-  },[resourceType]);
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="App">
-     <button onClick={()=>setResourceType('posts')}>Posts</button>
-     <button onClick={()=>setResourceType('users')}>Users</button>
-     <button onClick={()=>setResourceType('comments')}>Comments</button>
-    
-    
-     <div>
-     <button onClick={()=>setResourceType('')}>Reset</button>
-     <h1>{resourceType}</h1>
-     </div>
-     {items.map(item=>{
-      return <pre>{JSON.stringify(item)}</pre>
-    })}
+      <p>Window width: {windowWidth}px</p>
     </div>
-   
   );
 }
 
