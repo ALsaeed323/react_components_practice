@@ -1,24 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 
-function App() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+export default function App() {
+  const [number, setNumber] = useState(0);
+  const [dark, setDark] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  const doubleNumber = useMemo(() => slowFunction(number), [number]);
 
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const themeStyles = useMemo(() => ({
+    backgroundColor: dark ? 'black' : 'white',
+    color: dark ? 'white' : 'black',
+  }), [dark]);
+
+  function slowFunction(num) {
+    console.log('Calling Slow Function');
+    for (let i = 0; i <= 1000000000; i++) {}
+    return num * 2;
+  }
 
   return (
-    <div className="App">
-      <p>Window width: {windowWidth}px</p>
+    <div style={themeStyles}>
+      <input
+        type="number"
+        value={number}
+        onChange={(e) => setNumber(parseInt(e.target.value))}
+      />
+      <button onClick={() => setDark(prevDark => !prevDark)}>
+        Toggle Theme
+      </button>
+      <div>{doubleNumber}</div>
     </div>
   );
 }
-
-export default App;
