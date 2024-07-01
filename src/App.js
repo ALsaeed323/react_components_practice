@@ -1,40 +1,47 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 
 // Action types
 const ACTIONS = {
-  INCREMENT: 'increment',
-  DECREMENT: 'decrement'
+  ADD_TODO: 'add-todo'
 };
 
 // Reducer function
 function reducer(state, action) {
   switch (action.type) {
-    case ACTIONS.INCREMENT:
-      return { count: state.count + 1 };
-    case ACTIONS.DECREMENT:
-      return { count: state.count - 1 };
+    case ACTIONS.ADD_TODO:
+      return [...state, { id: Date.now(), text: action.payload }];
     default:
-      console.log('Caught error in reducer:', action.type);
-      throw new Error();
+      return state;
   }
 }
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  const [todos, dispatch] = useReducer(reducer, []);
+  const [name, setName] = useState('');
 
-  function increment() {
-    dispatch({ type: ACTIONS.INCREMENT });
-  }
-
-  function decrement() {
-    dispatch({ type: ACTIONS.DECREMENT });
+  // Handle form submission
+  function handleSubmit(e) {
+    e.preventDefault();
+    dispatch({ type: ACTIONS.ADD_TODO, payload: name });
+    setName(''); // Clear input after adding todo
   }
 
   return (
     <div>
-      <button onClick={decrement}>-</button>
-      <span>{state.count}</span>
-      <button onClick={increment}>+</button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button type="submit">Add Todo</button>
+      </form>
+
+      <ul>
+        {todos.map(todo => (
+          <li key={todo.id}>{todo.text}</li>
+        ))}
+      </ul>
     </div>
   );
 }
