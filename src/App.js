@@ -1,16 +1,40 @@
-import React, { useState, createContext } from 'react';
-import Nav from './components/nav';
+import React, { useReducer } from 'react';
 
-// Create a context
-  export const BtnContext = createContext();
+// Action types
+const ACTIONS = {
+  INCREMENT: 'increment',
+  DECREMENT: 'decrement'
+};
+
+// Reducer function
+function reducer(state, action) {
+  switch (action.type) {
+    case ACTIONS.INCREMENT:
+      return { count: state.count + 1 };
+    case ACTIONS.DECREMENT:
+      return { count: state.count - 1 };
+    default:
+      console.log('Caught error in reducer:', action.type);
+      throw new Error();
+  }
+}
 
 export default function App() {
-  const [signIn, setsignIn] = useState(false);
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  function increment() {
+    dispatch({ type: ACTIONS.INCREMENT });
+  }
+
+  function decrement() {
+    dispatch({ type: ACTIONS.DECREMENT });
+  }
 
   return (
-    <BtnContext.Provider value={[signIn, setsignIn]}>
-      <Nav />
-      <h1>{signIn ? 'Sign out' : 'Sign in'}</h1>
-    </BtnContext.Provider>
+    <div>
+      <button onClick={decrement}>-</button>
+      <span>{state.count}</span>
+      <button onClick={increment}>+</button>
+    </div>
   );
 }
